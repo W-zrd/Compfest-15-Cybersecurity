@@ -1,7 +1,7 @@
 ﻿# Binary Exploitation
 
 ## Canary2Win
-**Author: NeoZap**
+***Author: NeoZap***
 Mr. Ary is a professional and notorious stack smasher. I don't want to be a victim of Mr. Ary's shenanigans, so I added some protection to my binary and proudly said "Let's see if you can, Ary!". But alas, Mr. Ary still smashed my stack 😔. Can you too? Hopefully not that huge of a diff spike 🙏 
 
     nc 34.101.174.85 10002
@@ -51,7 +51,7 @@ Setelah menemukan nilai canary, selanjutnya adalah menyusun payload dan return t
 **Flag: COMPFEST15{fmtstr_to_leak_canary_bof_to_win__s4tsetsats3t}**
 
 ## ret2libc
-**Author: NeoZap**
+***Author: NeoZap***
 
 Usual ret2libc.
 
@@ -116,3 +116,108 @@ Hitung base address dari `libc` dengan mengurangkan alamat `printf` yang sudah d
 ![flag2](images/flag2.png)
 
 **Flag: COMPFEST15{ret2libc_more_like_ret2libzy_peazy_lemon_squeezy}**
+
+## ret2lib--c? i don't c it..
+***Author: NeoZap***
+
+Same binary as ret2libc, but where is the libc? I don't see it..
+
+*NOTE: The libc used in this challenge is different from the one in ret2libc.*
+
+`nc 34.101.174.85 10008`
+
+### Solution
+Challenge ini mirip dengan yang sebelumnya (*bahkan source code dan binary filenya juga sama*), jadi saya skip bagian code review dan identifikasi kasusnya. Yang membedakan adalah kali ini kita tidak diberikan file `libc.so.6`
+
+
+## Greetify
+***Author: NeoZap***
+
+Because I'm feeling lonely, I made an application to greet me. But I'm sure that I'm not the only one who's lonely, so I made it in a way that it can greet anyone. However, I'm not sure if it's safe to use. Can you help me check it?
+
+Flag is at `flag.txt`
+
+`nc 34.101.174.85 10001`
+
+### Source Code Review
+Di sini, program mendeklarasikan array `name` dengan panjang 88 byte, lalu menggunakan `gets()` untuk membaca input pengguna ke dalam `name`. Karena `gets()` tidak melakukan pengecekan panjang, pengguna dapat memasukkan lebih dari 88 byte data, yang akan menimpa data di memori yang berdekatan
+
+### Case Identification
+Lihat proteksi yang nyala pada file binary dengan `checksec`
+
+    Arch:     amd64-64-little
+    RELRO:    Full RELRO
+    Stack:    No canary found
+    NX:       NX enabled
+    PIE:      PIE enabled
+Karena tidak ada stack canary, langsung saja lakukan overflow ke programnya.
+
+### Solution
+Pada source code, terlihat bahwa variabel `name` menyimpan buffer sebanyak 88 byte. Jadi kita akan melakukan overflow sebanyak 96 bytes karakter + string `flag.txt`. 96 karakter didapat dari ukuran variable `name` dan 8 bytes padding. Berikut adalah solvernya :
+
+    python2 -c "print 'A'*96 + 'flag.txt'" | nc 34.101.174.85 10001
+
+![greetify-flag](images/greetify-flag.png)
+
+# Cryptography
+
+## Seems Familiar
+***Author: potsu***
+
+Your friend has developed an AES-based enryption system in his spare time. That system is very limited and only able to use printable characters, and furthermore, two of four of its functions has yet to be fixed. Even though they are broken, he insisted the flag can be acquired through thorough analysis of the encryption itself. Feeling intrigued, you feel like you are able to get the flag.
+
+`nc 34.101.174.85 10000`
+
+### Source Code Review
+Berdasarkan source code yang diberikan pada soal, enkripsi yang digunakan pada script ini adalah AES mode ECB. File ini memiliki fungsi `encrypt` yang mengenkripsi input user dan mencetak hasil cipher teks dalam bentuk hex. Fungsi `decrypt` dalam skrip ini tidak berfungsi, dan terdapat fungsi `get_flag` yang juga tidak berfungsi. Jadi, satu-satunya opsi yang bisa dipilih adalah opsi nomor 2, yaitu `Encrypt a message`.
+
+Dari analisis skrip, kita tahu bahwa pesan dienkripsi dalam blok-blok 16 byte (128 bit) menggunakan mode ECB. Oleh karena itu, kita dapat menguraikan cipher teks ke dalam blok-blok 16 byte dan mencoba mendekripsi setiap blok secara terpisah.
+
+
+### Case Identification
+-   Mode ECB (Electronic Codebook) adalah mode operasi blok cipher yang paling sederhana. Dalam mode ini, setiap blok teks asli dienkripsi secara independen dengan kunci yang sama.
+-   Kerentanan utama terletak pada penggunaan mode ECB untuk enkripsi. Dalam mode ECB, setiap blok teks asli dienkripsi secara independen dengan kunci yang sama. Oleh karena itu, dua blok teks asli yang sama akan menghasilkan blok cipher teks yang sama jika dienkripsi dengan kunci yang sama. 
+- Jadi, mode ini rentan terhadap serangan bruteforce.
+
+### Solution
+Karena setiap blok dienkripsi secara independen, kita dapat mengirimkan berbagai kombinasi karakter ke server dan membandingkan blok cipher teks yang dihasilkan dengan blok cipher teks target. Idenya adalah :
+-   Untuk setiap karakter yang dikirimkan, kita bandingkan blok cipher teks yang dihasilkan dengan blok cipher teks target.
+-   Jika blok cocok, maka karakter yang dikirimkan adalah bagian dari flag, dan proses ini diulangi untuk karakter berikutnya, sampai seluruh flag ketemu.
+
+**[Berikut adalah script solver yang saya gunakan](Crypto-SeemsFamiliar/decrypt.py)**
+
+![crypto-flag](images/crypto-flag.png)
+
+# Reverse Engineering
+
+## Serial Key
+***Author: prajnapras19****
+
+Classic reverse, classic serial key
+
+`nc 34.101.174.85 10003`
+
+### Source Code Review
+XA
+
+### Case Identification
+XA
+
+### Solution
+XA
+
+## baby JaSon adler
+***Author: Lily***
+
+Most people say that babies are hard to understand. But that’s not the case for baby Jason. everyone can understand him easily.
+
+### Source Code Review
+XA
+
+### Case Identification
+XA
+
+### Solution
+XA
+
+# Web Exploitation
