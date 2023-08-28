@@ -1,0 +1,379 @@
+#include "out.h"
+
+
+
+int _init(EVP_PKEY_CTX *ctx)
+
+{
+  int iVar1;
+  
+  iVar1 = __gmon_start__();
+  return iVar1;
+}
+
+
+
+void FUN_001007d0(void)
+
+{
+                    // WARNING: Treating indirect jump as call
+  (*(code *)(undefined *)0x0)();
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+
+int strncmp(char *__s1,char *__s2,size_t __n)
+
+{
+  int iVar1;
+  
+  iVar1 = strncmp(__s1,__s2,__n);
+  return iVar1;
+}
+
+
+
+void __isoc99_fscanf(void)
+
+{
+  __isoc99_fscanf();
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+
+int puts(char *__s)
+
+{
+  int iVar1;
+  
+  iVar1 = puts(__s);
+  return iVar1;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+
+size_t strlen(char *__s)
+
+{
+  size_t sVar1;
+  
+  sVar1 = strlen(__s);
+  return sVar1;
+}
+
+
+
+void __stack_chk_fail(void)
+
+{
+                    // WARNING: Subroutine does not return
+  __stack_chk_fail();
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+
+int printf(char *__format,...)
+
+{
+  int iVar1;
+  
+  iVar1 = printf(__format);
+  return iVar1;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+
+void * malloc(size_t __size)
+
+{
+  void *pvVar1;
+  
+  pvVar1 = malloc(__size);
+  return pvVar1;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+
+int setvbuf(FILE *__stream,char *__buf,int __modes,size_t __n)
+
+{
+  int iVar1;
+  
+  iVar1 = setvbuf(__stream,__buf,__modes,__n);
+  return iVar1;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+
+FILE * fopen(char *__filename,char *__modes)
+
+{
+  FILE *pFVar1;
+  
+  pFVar1 = fopen(__filename,__modes);
+  return pFVar1;
+}
+
+
+
+void __isoc99_scanf(void)
+
+{
+  __isoc99_scanf();
+  return;
+}
+
+
+
+// WARNING: Unknown calling convention -- yet parameter storage is locked
+
+char * strdup(char *__s)
+
+{
+  char *pcVar1;
+  
+  pcVar1 = strdup(__s);
+  return pcVar1;
+}
+
+
+
+void __cxa_finalize(void)
+
+{
+  __cxa_finalize();
+  return;
+}
+
+
+
+void processEntry _start(undefined8 param_1,undefined8 param_2)
+
+{
+  undefined auStack_8 [8];
+  
+  __libc_start_main(main,param_2,&stack0x00000008,__libc_csu_init,__libc_csu_fini,param_1,auStack_8)
+  ;
+  do {
+                    // WARNING: Do nothing block with infinite loop
+  } while( true );
+}
+
+
+
+// WARNING: Removing unreachable block (ram,0x001008e7)
+// WARNING: Removing unreachable block (ram,0x001008f3)
+
+void deregister_tm_clones(void)
+
+{
+  return;
+}
+
+
+
+// WARNING: Removing unreachable block (ram,0x00100938)
+// WARNING: Removing unreachable block (ram,0x00100944)
+
+void register_tm_clones(void)
+
+{
+  return;
+}
+
+
+
+void __do_global_dtors_aux(void)
+
+{
+  if (completed_7698 != '\0') {
+    return;
+  }
+  __cxa_finalize(__dso_handle);
+  deregister_tm_clones();
+  completed_7698 = 1;
+  return;
+}
+
+
+
+void frame_dummy(void)
+
+{
+  register_tm_clones();
+  return;
+}
+
+
+
+undefined8 check(char *param_1)
+
+{
+  char cVar1;
+  int iVar2;
+  size_t sVar3;
+  undefined8 uVar4;
+  void *pvVar5;
+  char *pcVar6;
+  long in_FS_OFFSET;
+  int local_70;
+  int local_6c;
+  int local_68;
+  int local_64;
+  int local_60;
+  char *apcStack_58 [6];
+  char local_24;
+  char local_23;
+  char local_22;
+  char local_21;
+  long local_20;
+  
+  local_20 = *(long *)(in_FS_OFFSET + 0x28);
+  sVar3 = strlen(param_1);
+  if (sVar3 == 0x18) {
+    for (local_70 = 4; local_70 < 0x18; local_70 = local_70 + 5) {
+      if (param_1[local_70] != '-') {
+        uVar4 = 0;
+        goto LAB_00100c3a;
+      }
+    }
+    for (local_6c = 0; local_6c < idx; local_6c = local_6c + 1) {
+      iVar2 = strncmp(*(char **)(serial + (long)local_6c * 8),param_1,0x18);
+      if (iVar2 == 0) {
+        uVar4 = 0;
+        goto LAB_00100c3a;
+      }
+    }
+    for (local_68 = 0; iVar2 = idx, local_68 < 0x18; local_68 = local_68 + 5) {
+      for (local_64 = local_68; local_64 < local_68 + 4; local_64 = local_64 + 1) {
+        cVar1 = param_1[local_64];
+        if (((cVar1 < '0') || ('9' < cVar1)) && ((cVar1 < 'A' || ('Z' < cVar1)))) {
+          uVar4 = 0;
+          goto LAB_00100c3a;
+        }
+      }
+      local_24 = param_1[local_68];
+      local_23 = param_1[(long)local_68 + 1];
+      local_22 = param_1[(long)local_68 + 2];
+      local_21 = param_1[(long)local_68 + 3];
+      for (local_60 = 0; local_60 < local_68 / 5; local_60 = local_60 + 1) {
+        iVar2 = strncmp(apcStack_58[local_60],&local_24,4);
+        if (iVar2 == 0) {
+          uVar4 = 0;
+          goto LAB_00100c3a;
+        }
+      }
+      pcVar6 = (char *)malloc(4);
+      apcStack_58[local_68 / 5] = pcVar6;
+      pcVar6 = strdup(&local_24);
+      apcStack_58[local_68 / 5] = pcVar6;
+    }
+    pvVar5 = malloc(0x18);
+    *(void **)(serial + (long)iVar2 * 8) = pvVar5;
+    iVar2 = idx;
+    pcVar6 = strdup(param_1);
+    *(char **)(serial + (long)iVar2 * 8) = pcVar6;
+    idx = idx + 1;
+    uVar4 = 1;
+  }
+  else {
+    uVar4 = 0;
+  }
+LAB_00100c3a:
+  if (local_20 != *(long *)(in_FS_OFFSET + 0x28)) {
+                    // WARNING: Subroutine does not return
+    __stack_chk_fail();
+  }
+  return uVar4;
+}
+
+
+
+undefined8 main(void)
+
+{
+  int iVar1;
+  FILE *pFVar2;
+  long in_FS_OFFSET;
+  int local_a4;
+  undefined local_98 [32];
+  undefined local_78 [104];
+  long local_10;
+  
+  local_10 = *(long *)(in_FS_OFFSET + 0x28);
+  setvbuf(stdout,(char *)0x0,2,0);
+  local_a4 = 0;
+  do {
+    if (99 < local_a4) {
+      pFVar2 = fopen("flag.txt","r");
+      __isoc99_fscanf(pFVar2,&DAT_00100e13,local_78);
+      printf("%s",local_78);
+LAB_00100d69:
+      if (local_10 != *(long *)(in_FS_OFFSET + 0x28)) {
+                    // WARNING: Subroutine does not return
+        __stack_chk_fail();
+      }
+      return 0;
+    }
+    printf("Serial %d ==> ",(ulong)(local_a4 + 1));
+    __isoc99_scanf(&DAT_00100e13,local_98);
+    iVar1 = check(local_98);
+    if (iVar1 == 0) {
+      puts("Salah");
+      goto LAB_00100d69;
+    }
+    local_a4 = local_a4 + 1;
+  } while( true );
+}
+
+
+
+void __libc_csu_init(EVP_PKEY_CTX *param_1,undefined8 param_2,undefined8 param_3)
+
+{
+  long lVar1;
+  
+  _init(param_1);
+  lVar1 = 0;
+  do {
+    (*(code *)(&__frame_dummy_init_array_entry)[lVar1])((ulong)param_1 & 0xffffffff,param_2,param_3)
+    ;
+    lVar1 = lVar1 + 1;
+  } while (lVar1 != 1);
+  return;
+}
+
+
+
+void __libc_csu_fini(void)
+
+{
+  return;
+}
+
+
+
+void _fini(void)
+
+{
+  return;
+}
+
+
+

