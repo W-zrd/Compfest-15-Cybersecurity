@@ -22,7 +22,7 @@
 - [**best64** (100 pts)](#10-best64)
 - [**internal web** (257 pts)](#11-internal-web)
 
-# Canary2Win
+# 1. Canary2Win
 *Author: NeoZap*
 
 Mr. Ary is a professional and notorious stack smasher. I don't want to be a victim of Mr. Ary's shenanigans, so I added some protection to my binary and proudly said "Let's see if you can, Ary!". But alas, Mr. Ary still smashed my stack 😔. Can you too? Hopefully not that huge of a diff spike 🙏 
@@ -354,5 +354,6 @@ XA
 
 ### Solution
 XA
+
 
 
