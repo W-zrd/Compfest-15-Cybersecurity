@@ -1,6 +1,28 @@
-﻿# Binary Exploitation
+# List of Problems:
 
-## 1. Canary2Win
+## Binary Exploitation
+
+- [**Canary2Win** (162 pts)](#1-canary2win)
+- [**ret2libc** (460 pts)](#2-ret2libc)
+- [**ret2lib--c? i don't c it..** (484 pts)](#3-ret2lib--c-i-dont-c-it)
+- [**Greetify** (100 pts)](#4-greetify)
+-  [**Let's Jump** (469 pts)](#5-lets-jump)
+
+## Cryptography
+
+- [**Seems Familiar** (257 pts)](#6-seems-familiar)
+
+## Reverse Engineering
+
+- [**Serial Key** (100 pts)](#7-serial-key)
+- [**baby JaSon adler** (116 pts)](#8-baby-jason-adler)
+
+## Web Exploitation
+
+- [**best64** (100 pts)](#10-best64)
+- [**internal web** (257 pts)](#11-internal-web)
+
+# Canary2Win
 *Author: NeoZap*
 
 Mr. Ary is a professional and notorious stack smasher. I don't want to be a victim of Mr. Ary's shenanigans, so I added some protection to my binary and proudly said "Let's see if you can, Ary!". But alas, Mr. Ary still smashed my stack 😔. Can you too? Hopefully not that huge of a diff spike 🙏 
@@ -51,7 +73,7 @@ Setelah menemukan nilai canary, selanjutnya adalah menyusun payload dan return t
 
 **Flag: COMPFEST15{fmtstr_to_leak_canary_bof_to_win__s4tsetsats3t}**
 
-## 2. ret2libc
+# 2. ret2libc
 *Author: NeoZap*
 
 Usual ret2libc.
@@ -118,7 +140,7 @@ Hitung base address dari `libc` dengan mengurangkan alamat `printf` yang sudah d
 
 **Flag: COMPFEST15{ret2libc_more_like_ret2libzy_peazy_lemon_squeezy}**
 
-## 3. ret2lib--c? i don't c it..
+# 3. ret2lib--c? i don't c it..
 *Author: NeoZap*
 
 Same binary as ret2libc, but where is the libc? I don't see it..
@@ -147,12 +169,11 @@ io.sendlineafter('>', payload)
 io.recv()
 ```
 
-
-    
-    # Leaked printf addr
-    leaked_printf  =  unpack(io.recv()[:6].ljust(8, b"\x00"))
-    info("Leaked: %#x", leaked_printf)
-
+```py
+# Leaked printf addr
+leaked_printf  =  unpack(io.recv()[:6].ljust(8, b"\x00"))
+info("Leaked: %#x", leaked_printf)
+```
 
 ![leaked-printf-v2](images/leaked-printf-v2.png)
     
@@ -167,7 +188,7 @@ Lihat tabel bagian Offset pada web tersebut, value itu yang akan kita pakai untu
 ![ret2libc2-flag](images/ret2libc2-flag.png)
 
 
-## 4. Greetify
+# 4. Greetify
 *Author: NeoZap*
 
 Because I'm feeling lonely, I made an application to greet me. But I'm sure that I'm not the only one who's lonely, so I made it in a way that it can greet anyone. However, I'm not sure if it's safe to use. Can you help me check it?
@@ -196,12 +217,10 @@ Pada source code, terlihat bahwa variabel `name` menyimpan buffer sebanyak 88 by
 
 ![greetify-flag](images/greetify-flag.png)
 
-## 5. Lets Jump
+# 5. Lets Jump
 To be added soon.
 
-# Cryptography
-
-## 6. Seems Familiar
+# 6. Seems Familiar
 *Author: potsu*
 
 Your friend has developed an AES-based enryption system in his spare time. That system is very limited and only able to use printable characters, and furthermore, two of four of its functions has yet to be fixed. Even though they are broken, he insisted the flag can be acquired through thorough analysis of the encryption itself. Feeling intrigued, you feel like you are able to get the flag.
@@ -228,9 +247,7 @@ Karena setiap blok dienkripsi secara independen, kita dapat mengirimkan berbagai
 
 ![crypto-flag](images/crypto-flag.png)
 
-# Reverse Engineering
-
-## 7. Serial Key
+# 7. Serial Key
 *Author: prajnapras19*
 
 Classic reverse, classic serial key
@@ -256,7 +273,7 @@ Berdasarkan informasi di atas, contoh serial key yang valid adalah :
 
 Hal ini akan mudah jika dibuat automasi dengan script python. **[Berikut adalah script solver yang saya gunakan](Reversing-SerialKey/serial.py)**
 
-## 8. baby JaSon adler
+# 8. baby JaSon adler
 *Author: Lily*
 
 Most people say that babies are hard to understand. But that’s not the case for baby Jason. everyone can understand him easily.
@@ -300,10 +317,7 @@ Script ini mengenkripsi setengah pertama dari `enc_text` dan membandingkan hasil
 Jika hasil enkripsi sama dengan `enc_text`, maka kita dapat menggunakan algoritma dekripsi yang merupakan kebalikan dari algoritma enkripsi untuk mendecrypt `enc_text`.
 
 
-
-# Web Exploitation
-
-## 9. SpotyShare
+# 9. SpotiShare
 *Author: Lily*
 
 Most people say that babies are hard to understand. But that’s not the case for baby Jason. everyone can understand him easily.
@@ -318,7 +332,7 @@ XA
 XA
 
 
-## 10. best64
+# 10. best64
 *Author: Lily*
 
 Most people say that babies are hard to understand. But that’s not the case for baby Jason. everyone can understand him easily.
