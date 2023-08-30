@@ -1,4 +1,4 @@
-# List of Problems:
+﻿# List of Problems:
 
 ## Binary Exploitation
 
@@ -12,15 +12,15 @@
 
 - [**Seems Familiar** (257 pts)](#6-seems-familiar)
 
+## Forensic
+
+- [**Intro to SysAdmin** (408 pts)](#7-intro-to-sysadmin)
+
 ## Reverse Engineering
 
-- [**Serial Key** (100 pts)](#7-serial-key)
-- [**baby JaSon adler** (116 pts)](#8-baby-jason-adler)
+- [**Serial Key** (100 pts)](#8-serial-key)
+- [**baby JaSon adler** (116 pts)](#9-baby-jason-adler)
 
-## Web Exploitation
-
-- [**best64** (100 pts)](#10-best64)
-- [**internal web** (257 pts)](#11-internal-web)
 
 # 1. Canary2Win
 *Author: NeoZap*
@@ -247,7 +247,52 @@ Karena setiap blok dienkripsi secara independen, kita dapat mengirimkan berbagai
 
 ![crypto-flag](images/crypto-flag.png)
 
-# 7. Serial Key
+# 7. Intro to SysAdmin
+*Author: rorre*
+
+Welcome to the world of sysadmin! Our postgresql server was hacked, can you check out what's happening here?
+
+Requirements:
+
+-   A linux system! VM or WSL (should) work too
+
+### Setting up Environment
+1. Extract attachment yang diberikan soal sebagai root
+
+    sudo tar -xf debian.tar.gz
+
+2. Set up environment variable
+
+    export DEBROOT=$PWD/debian
+    
+3. Cek environment variable
+
+    echo $DEBROOT
+
+4. Mount file system
+```
+mount -v --bind /dev "$DEBROOT"/dev
+mount -v --bind /dev/pts "$DEBROOT"/dev/pts
+mount -vt proc proc "$DEBROOT"/proc
+mount -vt sysfs sysfs "$DEBROOT"/sys
+mount -vt tmpfs tmpfs "$DEBROOT"/run
+```
+
+5. Change root
+```
+chroot "$DEBROOT" /usr/bin/env -i   \
+    HOME=/root                      \
+    TERM="$TERM"                    \
+    PS1='(root chroot) \u:\w\$ '    \
+    PATH=/usr/bin:/usr/sbin         \
+    /bin/bash --login
+```
+
+
+### Solution
+*(TO-DO)*
+
+# 8. Serial Key
 *Author: prajnapras19*
 
 Classic reverse, classic serial key
@@ -273,7 +318,7 @@ Berdasarkan informasi di atas, contoh serial key yang valid adalah :
 
 Hal ini akan mudah jika dibuat automasi dengan script python. **[Berikut adalah script solver yang saya gunakan](Reversing-SerialKey/serial.py)**
 
-# 8. baby JaSon adler
+# 9. baby JaSon adler
 *Author: Lily*
 
 Most people say that babies are hard to understand. But that’s not the case for baby Jason. everyone can understand him easily.
@@ -315,45 +360,4 @@ Cara yang saya lakukan adalah mengubah algoritma enkripsi dari JavaScript ke Pyt
 Script ini mengenkripsi setengah pertama dari `enc_text` dan membandingkan hasilnya dengan `enc_text` untuk memastikan bahwa algoritma tersebut benar.
 
 Jika hasil enkripsi sama dengan `enc_text`, maka kita dapat menggunakan algoritma dekripsi yang merupakan kebalikan dari algoritma enkripsi untuk mendecrypt `enc_text`.
-
-
-# 9. SpotiShare
-*Author: Lily*
-
-Most people say that babies are hard to understand. But that’s not the case for baby Jason. everyone can understand him easily.
-
-### Source Code Review
-XA
-
-### Case Identification
-XA
-
-### Solution
-XA
-
-
-# 10. best64
-*Author: Lily*
-
-Most people say that babies are hard to understand. But that’s not the case for baby Jason. everyone can understand him easily.
-
-### Case Identification
-XA
-
-### Solution
-XA
-
-
-## 11. internal web
-*Author: Lily*
-
-Most people say that babies are hard to understand. But that’s not the case for baby Jason. everyone can understand him easily.
-
-### Case Identification
-XA
-
-### Solution
-XA
-
-
 
