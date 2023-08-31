@@ -1,4 +1,4 @@
-﻿# List of Problems:
+# List of Problems:
 
 ## Binary Exploitation
 
@@ -107,17 +107,28 @@ Selain itu juga proteksi PIE pada file binary terlihat disabled sehingga address
 ### Solution
 Secara garis besar, urutan stepnya adalah sebagai berikut.
 
-- **Langkah 1:** Alamat fungsi dalam libc akan berbeda setiap kali program dijalankan. Jadi, kita perlu mencari tahu base address dari `libc`. Meskipun alamat ini random karena ada ASLR, kita dapat leak alamat fungsi dalam `libc` dengan memanggil  `printf` dengan argumen `printf@got.plt`. Nanti hasilnya adalah alamat dari `printf` dalam `libc`.
+- Alamat fungsi dalam libc akan berbeda setiap kali program dijalankan. Jadi, kita perlu mencari tahu base address dari `libc`. Meskipun alamat ini random karena ada ASLR, kita dapat leak alamat fungsi dalam `libc` dengan memanggil  `printf` dengan argumen `printf@got.plt`. Nanti hasilnya adalah alamat dari `printf` dalam `libc`.
 
-- **Langkah 2:** Setelah dapat alamat `printf` dalam `libc`, kita dapat menghitung base address dari `libc` dengan mengurangkan offset `printf` dalam `libc` yang diketahui dari alamat bocor.
+- Setelah dapat alamat `printf` dalam `libc`, kita dapat menghitung base address dari `libc` dengan mengurangkan offset `printf` dalam `libc` yang diketahui dari alamat bocor.
 
-- **Langkah 3:** Setelah kita memiliki base address dari `libc`, kita tahu alamat dari semua fungsi dalam `libc`. Dengan demikian, kita dapat membuat payload kedua yang mengubah return address untuk memanggil fungsi `system` dengan argumen string `/bin/sh`.
+- Setelah kita memiliki base address dari `libc`, kita tahu alamat dari semua fungsi dalam `libc`. Dengan demikian, kita dapat membuat payload kedua yang mengubah return address untuk memanggil fungsi `system` dengan argumen string `/bin/sh`.
 
 **[Berikut adalah script solver yang saya gunakan](PWN-canary2win/exploit.py)**, dan berikut adalah penjelasan solvernya.
 
 **Payload Pertama**
 
 - Payload pertama bertujuan untuk leak address `libc`
+- Sebelum itu, kita perlu gadget `pop rdi ret` dan gadget `ret` dengan perintah :
+```
+ropper --file chall --search "pop rdi"
+```
+```
+ropper --file chall --search "ret"
+```
+- Maka akan ketemu :
+
+![pop-rdi](images/pop-rdi.png)
+
 - Panggil `printf` dengan argumen `printf@got.plt`. Hal ini akan mencetak address dari `printf` dalam `libc` ke stdout.
 - Gunakan instruksi `ret` untuk memastikan stack allignment untuk arsitektur x86_64 sesuai (16 byte) sebelum memanggil `printf`. [Cek artikel berikut](https://ropemporium.com/guide.html#Common%20pitfalls).
 - Setelah mencetak alamat `printf`, jangan lupa kembali ke fungsi `main`. Berikut adalah address `printf` yang berhasil di leak.
@@ -147,7 +158,9 @@ Same binary as ret2libc, but where is the libc? I don't see it..
 
 *NOTE: The libc used in this challenge is different from the one in ret2libc.*
 
-`nc 34.101.174.85 10008`
+```
+nc 34.101.174.85 10008
+```
 
 ### Solution
 Challenge ini mirip dengan yang sebelumnya (*bahkan source code dan binary filenya juga sama*), jadi saya skip bagian code review dan identifikasi kasus. Yang membedakan adalah kali ini kita tidak diberikan file `libc.so.6`. Jadi kita perlu mencari tahu sendiri versi libc yang digunakan oleh server agar perhitungan base address libc tepat.
@@ -234,8 +247,8 @@ Dari analisis skrip, kita tahu bahwa pesan dienkripsi dalam blok-blok 16 byte (1
 
 
 ### Case Identification
--   Mode ECB (Electronic Codebook) adalah mode operasi blok cipher yang paling sederhana. Dalam mode ini, setiap blok teks asli dienkripsi secara independen dengan kunci yang sama.
--   Kerentanan utama terletak pada penggunaan mode ECB untuk enkripsi. Dalam mode ECB, setiap blok teks asli dienkripsi secara independen dengan kunci yang sama. Oleh karena itu, dua blok teks asli yang sama akan menghasilkan blok cipher teks yang sama jika dienkripsi dengan kunci yang sama. 
+-   Dalam mode ECB, setiap blok teks asli dienkripsi secara independen dengan kunci yang sama.
+-   Kerentanan utama terletak pada penggunaan mode ECB. Dalam mode ECB, setiap blok teks asli dienkripsi secara independen dengan kunci yang sama. Oleh karena itu, dua blok teks asli yang sama akan menghasilkan blok cipher teks yang sama jika dienkripsi dengan kunci yang sama. 
 - Jadi, mode ini rentan terhadap serangan bruteforce.
 
 ### Solution
@@ -259,17 +272,24 @@ Requirements:
 ### Setting up Environment
 1. Extract attachment yang diberikan soal sebagai root
 
-    sudo tar -xf debian.tar.gz
+```
+sudo tar -xf debian.tar.gz
+```
 
-2. Set up environment variable
+3. Set up environment variable
 
-    export DEBROOT=$PWD/debian
-    
-3. Cek environment variable
+```
+export DEBROOT=$PWD/debian
+``` 
 
-    echo $DEBROOT
+5. Cek environment variable
 
-4. Mount file system
+```
+echo $DEBROOT
+```
+
+7. Mount file system
+
 ```
 mount -v --bind /dev "$DEBROOT"/dev
 mount -v --bind /dev/pts "$DEBROOT"/dev/pts
@@ -278,7 +298,7 @@ mount -vt sysfs sysfs "$DEBROOT"/sys
 mount -vt tmpfs tmpfs "$DEBROOT"/run
 ```
 
-5. Change root
+9. Change root
 ```
 chroot "$DEBROOT" /usr/bin/env -i   \
     HOME=/root                      \
@@ -292,12 +312,19 @@ chroot "$DEBROOT" /usr/bin/env -i   \
 ### Solution
 *(TO-DO)*
 
+![foren-step](images/foren-step.png)
+
+![foren-flag](images/foren-flag.png)
+
+
 # 8. Serial Key
 *Author: prajnapras19*
 
 Classic reverse, classic serial key
 
-`nc 34.101.174.85 10003`
+```
+nc 34.101.174.85 10003
+```
 
 ### Source Code Review
 Hanya diberikan file binary tanpa source code, Jadi silakan decompile sendiri menggunakan `Ghidra` atau decompiler lainnya. Terdapat dua user defined function, yaitu fungsi `main()` dan fungsi `check()`. Informasi yang didapatkan berdasarkan fungsi `check` :
@@ -360,4 +387,5 @@ Cara yang saya lakukan adalah mengubah algoritma enkripsi dari JavaScript ke Pyt
 Script ini mengenkripsi setengah pertama dari `enc_text` dan membandingkan hasilnya dengan `enc_text` untuk memastikan bahwa algoritma tersebut benar.
 
 Jika hasil enkripsi sama dengan `enc_text`, maka kita dapat menggunakan algoritma dekripsi yang merupakan kebalikan dari algoritma enkripsi untuk mendecrypt `enc_text`.
+
 
