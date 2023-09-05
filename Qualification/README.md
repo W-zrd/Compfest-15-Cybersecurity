@@ -61,8 +61,6 @@ Terlihat bahwa header dan struktur dari PNG ini rusak, bahkan isinya hanya angka
 
 Decode seluruh bilangan biner tersebut menjadi hex lalu simpan sebagai PNG. Hal ini bisa dilakukan dengan scripting python atau bisa juga dengan [tools online berikut](https://cryptii.com/pipes/binary-decoder) dan [Hexedit](https://hexed.it/). Maka akan didapat gambar kucing :
 
-![xxd](img/xxd.png)
-
 Tidak ada flag dalam gambar tersebut. Namun bisa jadi flagnya disembunyikan pada gambar tsbb dengan teknik steganography. Untuk memastikannya, saya menggunakan [tools online ini](https://www.aperisolve.com/), lalu didapat flag.
 
 ![steg](img/steg.png)
